@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Find Your Perfect Car</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .slider-group {
+      margin-bottom: 20px;
+    }
+    .slider-group label {
+      display: block;
+      font-weight: bold;
+    }
+    .value {
+      float: right;
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      font-size: 16px;
+      background: black;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .results {
+      margin-top: 30px;
+    }
+    .car {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Find Your Perfect Car</h1>
+<p>Adjust what matters most to you</p>
+
+<div class="slider-group">
+  <label>Reliability <span class="value" id="relVal">5</span></label>
+  <input type="range" min="1" max="10" value="5" id="reliability">
+</div>
+
+<div class="slider-group">
+  <label>Performance <span class="value" id="perfVal">5</span></label>
+  <input type="range" min="1" max="10" value="5" id="performance">
+</div>
+
+<div class="slider-group">
+  <label>Comfort <span class="value" id="comfVal">5</span></label>
+  <input type="range" min="1" max="10" value="5" id="comfort">
+</div>
+
+<div class="slider-group">
+  <label>Cost <span class="value" id="costVal">5</span></label>
+  <input type="range" min="1" max="10" value="5" id="cost">
+</div>
+
+<button onclick="calculate()">Show My Best Cars →</button>
+
+<div class="results" id="results"></div>
+
+<script>
+  const sliders = ["reliability","performance","comfort","cost"];
+
+  sliders.forEach(id => {
+    const slider = document.getElementById(id);
+    const display = document.getElementById(id.slice(0,4) + "Val");
+
+    slider.oninput = () => {
+      display.textContent = slider.value;
+    };
+  });
+
+  const cars = [
+    {
+      name: "Toyota Camry",
+      reliability: 9,
+      performance: 6,
+      comfort: 8,
+      cost: 8
+    },
+    {
+      name: "Honda Civic",
+      reliability: 8,
+      performance: 6,
+      comfort: 7,
+      cost: 9
+    },
+    {
+      name: "BMW 3 Series",
+      reliability: 6,
+      performance: 9,
+      comfort: 8,
+      cost: 4
+    },
+    {
+      name: "Subaru Outback",
+      reliability: 8,
+      performance: 6,
+      comfort: 8,
+      cost: 7
+    }
+  ];
+
+  function calculate() {
+    const weights = {
+      reliability: +document.getElementById("reliability").value,
+      performance: +document.getElementById("performance").value,
+      comfort: +document.getElementById("comfort").value,
+      cost: +document.getElementById("cost").value
+    };
+
+    const scored = cars.map(car => {
+      let score =
+        car.reliability * weights.reliability +
+        car.performance * weights.performance +
+        car.comfort * weights.comfort +
+        car.cost * weights.cost;
+
+      return { ...car, score };
+    });
+
+    scored.sort((a,b) => b.score - a.score);
+
+    const top = scored.slice(0,3);
+
+    const resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = "<h2>Top Picks:</h2>";
+
+    top.forEach(car => {
+      resultsDiv.innerHTML += `
+        <div class="car">
+          <strong>${car.name}</strong><br>
+          Score: ${car.score}
+        </div>
+      `;
+    });
+  }
+</script>
+
+</body>
+</html>
